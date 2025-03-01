@@ -3,32 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dice Roller API Test</title>
+    <title>Dice Roller</title>
 </head>
 <body>
-    <h1>Dice Roller API Test</h1>
-
-    <button onclick="rollDice(6)">Roll 6-sided Dice</button>
-    <button onclick="testCORS()">Test CORS Failure</button>
-
+    <h1>Dice Roller</h1>
+    <button id="roll">Roll Dice</button>
     <p id="result"></p>
 
     <script>
-        async function rollDice(sides) {
-            const response = await fetch(`http://localhost:3000/roll?sides=${sides}`);
-            const data = await response.json();
-            document.getElementById("result").innerText = `Rolled: ${data.roll}`;
-        }
+        // Wake up the server
+        fetch("http://DiceRollerApp.azurewebsites.net/roll")
+            .then(response => response.json())
+            .then(data => console.log("Server is awake:", data))
+            .catch(error => console.error("Error waking up server:", error));
 
-        async function testCORS() {
-            try {
-                const response = await fetch("http://localhost:3000/cors-fail");
-                const data = await response.json();
-                document.getElementById("result").innerText = `CORS test: ${data.message}`;
-            } catch (error) {
-                document.getElementById("result").innerText = `CORS failed as expected.`;
-            }
-        }
+        // Roll dice
+        document.getElementById("roll").addEventListener("click", () => {
+            fetch("http://DiceRollerApp.azurewebsites.net/roll?sides=6")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerText = `You rolled a ${data.roll} on a ${data.sides}-sided dice!`;
+                })
+                .catch(error => console.error("Error rolling dice:", error));
+        });
+
+        // Simulate CORS failure
+        fetch("http://DiceRollerApp.azurewebsites.net/cors-fail")
+            .then(response => response.json())
+            .then(data => console.log("CORS failure simulation:", data))
+            .catch(error => console.error("CORS failure:", error));
     </script>
 </body>
 </html>
