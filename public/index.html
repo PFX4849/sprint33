@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller API Test</title>
+</head>
+<body>
+    <h1>Dice Roller API Test</h1>
+
+    <button onclick="rollDice(6)">Roll 6-sided Dice</button>
+    <button onclick="testCORS()">Test CORS Failure</button>
+
+    <p id="result"></p>
+
+    <script>
+        async function rollDice(sides) {
+            const response = await fetch(`http://localhost:3000/roll?sides=${sides}`);
+            const data = await response.json();
+            document.getElementById("result").innerText = `Rolled: ${data.roll}`;
+        }
+
+        async function testCORS() {
+            try {
+                const response = await fetch("http://localhost:3000/cors-fail");
+                const data = await response.json();
+                document.getElementById("result").innerText = `CORS test: ${data.message}`;
+            } catch (error) {
+                document.getElementById("result").innerText = `CORS failed as expected.`;
+            }
+        }
+    </script>
+</body>
+</html>
